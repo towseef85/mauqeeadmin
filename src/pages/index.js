@@ -6,11 +6,17 @@ import React from 'react';
 import {samplePagesConfigs} from './sample';
 import Error404 from './errorPages/Error404';
 import {profileConfig} from './profile';
+import { catalogPages } from './catalog';
+import './index.style.less';
 
 const authorizedStructure = {
   fallbackPath: '/signin',
   unAuthorizedComponent: <Error403 />,
-  routes: [...samplePagesConfigs, ...profileConfig],
+  routes: [
+    ...samplePagesConfigs, 
+    ...profileConfig,
+    ...catalogPages
+  ],
 };
 
 const unAuthorizedStructure = {

@@ -29,22 +29,22 @@ const routesConfig = [
         type: 'collapse',
         children: [
           {
-            id: 'products',
-            title: 'Products',
+            id: 'catalog.category',
+            title: 'category',
             messageId: 'sidebar.catalog.category',
             path: '/apps/ecommerce/products',
           },
           {
-            id: 'product_detail',
-            title: 'Product Detail',
+            id: 'catalog.product',
+            title: 'product',
             messageId: 'sidebar.catalog.product',
             path: '/apps/ecommerce/product_detail',
           },
           {
-            id: 'orders',
-            title: 'Orders',
+            id: 'catalog.brands',
+            title: 'brands',
             messageId: 'sidebar.catalog.brands',
-            path: '/apps/ecommerce/orders',
+            path: '/catalog/brands',
           },
           {
             id: 'customers',

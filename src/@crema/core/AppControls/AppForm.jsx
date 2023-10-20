@@ -1,95 +1,112 @@
-import React, { useEffect } from 'react'
-import { Button, Form, Space, message } from 'antd'
+import React, {useEffect} from 'react';
+import {Button, Form, Space, message} from 'antd';
 import PropTypes from 'prop-types';
-import AppPageMetadata from '../AppPageMetadata'
-import AppsContainer from '../AppsContainer'
-import { useNavigate } from 'react-router-dom'
-import AppIconButton from '../AppIconButton'
-import { BiArrowBack } from 'react-icons/bi'
-import { CloseOutlined, PlusCircleOutlined, RollbackOutlined } from '@ant-design/icons'
-import AppsContent from '../AppsContainer/AppsContent'
-import AppAnimateGroup from '../AppAnimateGroup'
-import { GetUpdateData, onPost, onUpdateRecord } from 'redux/actions';
-import { useDispatch } from 'react-redux';
-import { POST_DATA } from 'shared/constants/ActionTypes';
+import AppPageMetadata from '../AppPageMetadata';
+import AppsContainer from '../AppsContainer';
+import {useNavigate} from 'react-router-dom';
+import AppIconButton from '../AppIconButton';
+import {BiArrowBack} from 'react-icons/bi';
+import {
+  CloseOutlined,
+  PlusCircleOutlined,
+  RollbackOutlined,
+} from '@ant-design/icons';
+import AppsContent from '../AppsContainer/AppsContent';
+import AppAnimateGroup from '../AppAnimateGroup';
+import {GetUpdateData, onPost, onUpdateRecord} from 'redux/actions';
+import {useDispatch} from 'react-redux';
+import {
+  FETCH_START,
+  FETCH_SUCCESS,
+  POST_DATA,
+  SHOW_MESSAGE,
+} from 'shared/constants/ActionTypes';
 
-export default function AppForm({formName, children, title,id, loading, labelCol = 8,
+export default function AppForm({
+  formName,
+  children,
+  title,
+  id,
+  loading,
+  labelCol = 8,
   wrapperCol = 16,
   controller,
-  action=POST_DATA,
-  otherValues=null,
+  action = POST_DATA,
+  otherValues = null,
   hasCondition = false,
   conditionMessage = null,
-  additionButton = null}) {
-    useEffect(async()=>{
-      if(id){
-        const {data} = await GetUpdateData(id, controller)
-        if(data.statusCode === 200){
-          formName.setFieldsValue(data.data)
-        }
+  additionButton = null,
+}) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  useEffect(async () => {
+    dispatch({type: FETCH_START});
+    if (id) {
+      debugger;
+      const {data} = await GetUpdateData(id, controller);
+      if (data.code === 200) {
+        dispatch({type: FETCH_SUCCESS});
+        formName.setFieldsValue(data.object);
+      } else {
+        navigate(-1);
+        dispatch({type: SHOW_MESSAGE, payload: 'No Record Found'});
       }
-      else{
-        formName.resetFields()
-      }
-    },[id])
-    const dispatch=useDispatch()
-  const navigate = useNavigate()
-  const onFinish=(values)=>{
-    if(hasCondition) return message.error(conditionMessage);
-    if(id){
-      if(otherValues){
-        let newValues ={...values, ...otherValues,id:id}
-        dispatch(onUpdateRecord(id,controller,newValues,navigate))
-      }
-      else{
-        let newValues ={...values,id:id}
-        dispatch(onUpdateRecord(id,controller,newValues,navigate))
-      }
-
+    } else {
+      dispatch({type: FETCH_SUCCESS});
+      formName.resetFields();
     }
-    else{
-      if(otherValues){
-        let newValues ={...values, ...otherValues}
-        dispatch(onPost(newValues,controller,action,formName))
+  }, [id]);
+
+  const onFinish = (values) => {
+    if (hasCondition) return message.error(conditionMessage);
+    if (id) {
+      if (otherValues) {
+        let newValues = {...values, ...otherValues, id: id};
+        dispatch(onUpdateRecord(id, controller, newValues, navigate));
+      } else {
+        let newValues = {...values, id: id};
+        dispatch(onUpdateRecord(id, controller, newValues, navigate));
       }
-      else{
-        dispatch(onPost(values,controller,action,formName))
+    } else {
+      if (otherValues) {
+        let newValues = {...values, ...otherValues};
+        dispatch(onPost(newValues, controller, action, formName));
+      } else {
+        dispatch(onPost(values, controller, action, formName));
       }
     }
-  }
-  const onFinishFailed=()=>{
+  };
+  const onFinishFailed = () => {};
 
-  }
-
-  const onCancel =()=>{
-    navigate(-1)
-  }
+  const onCancel = () => {
+    navigate(-1);
+  };
   return (
-    <>  
-    <AppPageMetadata title={title} />
-    <AppsContainer title={title} type='right' fullView>
-    <div className='mail-detail'>
-    <Form
-    form={formName}
-    labelCol={{
-      span: labelCol,
-    }}
-    wrapperCol={{
-      span: wrapperCol,
-    }}
-    onFinish={onFinish}
-    disabled={loading}
-    onFinishFailed={onFinishFailed}
-
-    >
-              <div className='apps-header'>
+    <>
+      <AppPageMetadata title={title} />
+      <AppsContainer title={title} type='right' fullView>
+        <div className='mail-detail'>
+          <Form
+            form={formName}
+            labelCol={{
+              span: labelCol,
+            }}
+            wrapperCol={{
+              span: wrapperCol,
+            }}
+            onFinish={onFinish}
+            disabled={loading}
+            onFinishFailed={onFinishFailed}>
+            <div className='apps-header'>
               <AppIconButton
                 className='mail-detail-arrow'
-                title={id ? `Update ${title}` :`Add ${title}`}
+                title={id ? `Update ${title}` : `Add ${title}`}
                 icon={<BiArrowBack />}
                 onClick={onCancel}
               />
-              <h5 className='mb-0 text-truncate'>{id ? `Update ${title}` :`Add ${title}`}</h5>
+              <h5 className='mb-0 text-truncate'>
+                {id ? `Update ${title}` : `Add ${title}`}
+              </h5>
               <div className='mail-detail-header-action'>
                 <Space>
                   <Button
@@ -124,16 +141,16 @@ export default function AppForm({formName, children, title,id, loading, labelCol
                 <div className='mail-detail-body'>{children}</div>
               </AppAnimateGroup>
             </AppsContent>
-    </Form>
-    </div>
-    </AppsContainer>
+          </Form>
+        </div>
+      </AppsContainer>
     </>
-  )
+  );
 }
 
 AppForm.propTypes = {
   children: PropTypes.any,
-  formName:PropTypes.any,
+  formName: PropTypes.any,
   title: PropTypes.string,
   loading: PropTypes.bool,
   labelCol: PropTypes.number,
@@ -143,8 +160,8 @@ AppForm.propTypes = {
   action: PropTypes.string,
   hasCondition: PropTypes.bool,
   conditionMessage: PropTypes.string,
-  updateAction:PropTypes.string,
-  otherValues:PropTypes.any,
-  id:PropTypes.string,
-  initialValues:PropTypes.any
+  updateAction: PropTypes.string,
+  otherValues: PropTypes.any,
+  id: PropTypes.string,
+  initialValues: PropTypes.any,
 };

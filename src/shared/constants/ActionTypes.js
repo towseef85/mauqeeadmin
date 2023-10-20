@@ -7,6 +7,13 @@ export const HIDE_MESSAGE = 'hide_message';
 export const TOGGLE_APP_DRAWER = 'toggle_app_drawer';
 export const UPDATING_CONTENT = 'updating_content';
 
+//GENERAL
+export const POST_DATA='POST_DATA'
+
+//BRAND
+export const GET_BRANDS ="GET_BRANDS"
+export const GET_SINGLEBRAND ="GET_SINGLEBRAND"
+
 //APP SETTING
 export const TOGGLE_NAV_COLLAPSED = 'toggle_nav_collapsed';
 export const SET_INITIAL_PATH = 'set_initial_path';
